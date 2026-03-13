@@ -1,0 +1,17 @@
+:root {
+  .default {
+    --xh-bg-color: #3384ee;
+    --xh-bg-hover-color: #406fac;
+    --xh-text-color: #e79ed6;
+  }
+  .green {
+    --xh-bg-color: #73c448;
+    --xh-bg-hover-color: #72a159;
+    --xh-text-color: #9e9d9d;
+  }
+  .glory {
+    --xh-bg-color: #dbae58;
+    --xh-bg-hover-color: #a38854;
+    --xh-text-color: #6ec4ab;
+  }
+}
