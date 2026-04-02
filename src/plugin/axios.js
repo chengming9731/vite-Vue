@@ -1,4 +1,42 @@
 import axios from 'axios'
+import { RequestHashGenerator } from '@/utils/tools'
+
+const hashGenerator = new RequestHashGenerator()
+const pendingRequestMap = new Map()
+
+const getRequestKey = (config = {}) => {
+  const requestParams = { ...(config.params || {}) }
+
+  return hashGenerator.generate({
+    method: config.method,
+    url: config.url,
+    baseURL: config.baseURL,
+    params: requestParams,
+    data: config.data
+  })
+}
+
+const removePendingRequest = (config = {}) => {
+  const requestKey = getRequestKey(config)
+  if (pendingRequestMap.has(requestKey)) {
+    pendingRequestMap.delete(requestKey)
+  }
+}
+
+const addPendingRequest = (config = {}) => {
+  const requestKey = getRequestKey(config)
+
+  // 相同请求只保留最新一次，取消旧请求
+  if (pendingRequestMap.has(requestKey)) {
+    const previousController = pendingRequestMap.get(requestKey)
+    previousController.abort('重复请求已取消')
+    pendingRequestMap.delete(requestKey)
+  }
+
+  const controller = new AbortController()
+  config.signal = controller.signal
+  pendingRequestMap.set(requestKey, controller)
+}
 
 // 创建 axios 实例
 const service = axios.create({
@@ -22,12 +60,13 @@ service.interceptors.request.use(
     }
 
     // 添加时间戳防止缓存
-    if (config.method === 'get') {
+    if ((config.method || '').toLowerCase() === 'get') {
       config.params = {
-        ...config.params,
-        _t: Date.now()
+        ...config.params
       }
     }
+
+    addPendingRequest(config)
 
     return config
   },
@@ -43,6 +82,8 @@ service.interceptors.response.use(
   response => {
     // 对响应数据做点什么
     console.log('✅ 响应成功:', response)
+
+    removePendingRequest(response.config)
 
     const res = response.data
 
@@ -70,6 +111,14 @@ service.interceptors.response.use(
   error => {
     // 对响应错误做点什么
     console.error('❌ 响应错误:', error)
+
+    if (error.config) {
+      removePendingRequest(error.config)
+    }
+
+    if (error.name === 'CanceledError' || error.code === 'ERR_CANCELED') {
+      return Promise.reject(new Error('请求已取消'))
+    }
 
     // 处理网络错误
     if (error.response) {

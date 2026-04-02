@@ -7,25 +7,17 @@
         @click="startRecording"
         :disabled="isRecording"
         class="btn-start"
-      >
-        开始录音
-      </button>
-
+      >开始录音</button>
       <button
         @click="stopRecording"
         :disabled="!isRecording"
         class="btn-stop"
-      >
-        停止录音
-      </button>
-
+      >停止录音</button>
       <button
         @click="downloadBlob"
         :disabled="!audioBlob"
         class="btn-download"
-      >
-        下载录音
-      </button>
+      >下载录音</button>
     </div>
 
     <div class="status">
@@ -141,13 +133,10 @@ const downloadBlob = () => {
   const a = document.createElement('a')
   a.href = url
   a.download = `${userStore.node_id}-${new Date().getTime()}.webm`
-  document.body.appendChild(a)
   a.click()
-  document.body.removeChild(a)
 
-  // 释放 URL
   requestIdleCallback(() => {
-    URL.revokeObjectURL(url)
+    URL.revokeObjectURL(url) // 释放 URL
   }, { timeout: 500 })
 }
 
@@ -251,7 +240,3 @@ button:disabled {
   width: 100%;
 }
 </style>
-
-
-
-

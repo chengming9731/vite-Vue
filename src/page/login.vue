@@ -7,14 +7,13 @@
     <form @submit.prevent="handleSubmit" v-loading="loading" class="login-form">
       <div class="login-item">
         <label for="">用户名</label>
-        <input v-model.trim="formData.userName" placeholder="请输入 github 用户名" type="text">
+        <input v-model.trim="formData.userName" placeholder="请输入用户名" type="text">
       </div>
       <div class="login-item">
         <label for="">密码</label>
         <input v-model.trim="formData.password" placeholder="请输入密码" type="password">
       </div>
 
-      <!-- 错误消息显示 -->
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
 
       <button type="submit">登录</button>
@@ -23,12 +22,12 @@
 </template>
 
 <script setup>
-import { ref, reactive, inject, onMounted } from 'vue'
-defineOptions({ name: 'login' })
-const redirectTo = inject('redirectTo'); // 注入路由方法
+import { inject, reactive, ref } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { login } from '@/api/login.js'
 
+defineOptions({ name: 'login' })
+
+const redirectTo = inject('redirectTo')
 const userStore = useUserStore()
 
 const formData = reactive({
@@ -37,10 +36,8 @@ const formData = reactive({
 })
 
 const loading = ref(false)
-// 添加错误消息状态
 const errorMessage = ref('')
 
-// 添加验证函数
 const validateForm = () => {
   if (!formData.userName.trim()) {
     errorMessage.value = '请输入用户名'
@@ -54,34 +51,38 @@ const validateForm = () => {
     errorMessage.value = '密码长度不能少于6位'
     return false
   }
+  errorMessage.value = ''
   return true
 }
 
 const handleSubmit = async () => {
-  // 先验证表单
-  if (!validateForm()) {
-    return
-  }
+  if (!validateForm()) return
+
   loading.value = true
-  /* fetch('/api/users/octocat', {
-    method: 'post',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(formData)
-  }) */
-  fetch(`/api/users/${formData.userName}`)
-  /* login(formData) */.then(response => {
-    console.log(response)
-    return response.json()
-  }).then(data => {
-    redirectTo('/')
-    // 存储用户信息
+  try {
+    const data = await fetch(`/api/users/${formData.userName}`)
+    /* login(formData) */.then(response => {
+      console.log(response)
+      return response.json()
+    })
+
+    if (!data) {
+      throw new Error(data.message || '登录失败')
+    }
+
     userStore.setUserInfo(data)
     sessionStorage.setItem('userInfo', JSON.stringify(data))
-  }).catch(err => {
-    errorMessage.value = err.message || '网络请求失败，请稍后重试'
-  }).finally(() => {
+
+    if (data.node_id) {
+      localStorage.setItem('token', data.node_id)
+    }
+
+    redirectTo?.('/')
+  } catch (err) {
+    errorMessage.value = err instanceof Error ? err.message : '网络请求失败，请稍后重试'
+  } finally {
     loading.value = false
-  })
+  }
 }
 </script>
 
@@ -91,7 +92,6 @@ const handleSubmit = async () => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  //align-items: center;
   background: #fff;
   width: 400px;
   padding: 30px;

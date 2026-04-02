@@ -1,5 +1,5 @@
 // loading 指令
-export const loadingDirective = {
+const loadingDirective = {
   mounted(el, binding) {
     // 创建 loading 遮罩元素
     const loadingMask = document.createElement('div');
@@ -50,8 +50,11 @@ export const loadingDirective = {
   }
 };
 
+// 深拷贝 structuredClone(obj)
 // 导出默认对象，包含所有指令
 export default {
-  loading: loadingDirective
+  async install(app) {
+    // 注册自定义指令
+    app.directive('loading', loadingDirective)
+  }
 };
-// 深拷贝 structuredClone(obj)

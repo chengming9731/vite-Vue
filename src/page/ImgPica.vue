@@ -208,11 +208,11 @@ const formatFileSize = (bytes) => {
   margin: 0 auto;
   /* 添加五彩斑斓的黑背景效果 */
   background: radial-gradient(ellipse at center,
-  rgba(0,0,0,1) 0%,
-  rgba(20,10,30,1) 20%,
-  rgba(10,5,20,1) 40%,
-  rgba(5,0,15,1) 60%,
-  rgba(0,0,0,1) 80%);
+  rgb(245 255 201) 0%,
+  rgb(198 250 255) 20%,
+  rgb(235 224 255) 40%,
+  rgb(198 255 230) 60%,
+  rgb(255 181 171) 80%);
   /* 添加微妙的渐变和纹理感 */
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
@@ -234,7 +234,7 @@ const formatFileSize = (bytes) => {
 }
 
 .upload-section button {
-  background-color: #4CAF50;
+  background: #4CAF50;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -245,7 +245,7 @@ const formatFileSize = (bytes) => {
 .image-preview, .compress-options, .compressed-preview {
   margin: 20px 0;
   padding: 15px;
-  border: 1px solid #ddd;
+  border: 1px solid #999;
   border-radius: 4px;
 }
 

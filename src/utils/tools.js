@@ -1,24 +1,32 @@
 // 哈希缓存类 - 封装请求哈希生成和缓存管理功能
+// 使用示例:
+// const generator = new RequestHashGenerator()
+// const hash = generator.generate({ url: '/api/users', method: 'GET', params: { id: 1 } })
 class RequestHashGenerator {
-  constructor(config) {
+  constructor() {
     this.hashCache = new Map();
     this.CACHE_DURATION = 50; // 50ms缓存时间
-    /** 提取核心参数
-     * 结合 url、method、data、params 生成唯一哈希值
-     * @param {Object} config - 请求配置对象
-     * @returns {string} 生成的哈希值
-     */
-    const method = (config.method || 'GET').toUpperCase();
-    const url = config.url || '';
-    const baseURL = config.baseURL || '';
+  }
+
+  /**
+   * 提取核心参数并生成请求哈希值
+   * 结合 url、method、data、params 生成唯一哈希值
+   * @param {Object} config - 请求配置对象
+   * @returns {string} 生成的哈希值
+   */
+  generate(config = {}) {
+    const safeConfig = config && typeof config === 'object' ? config : {};
+    const method = (safeConfig.method || 'GET').toUpperCase();
+    const url = safeConfig.url || '';
+    const baseURL = safeConfig.baseURL || '';
     const fullUrl = baseURL ? baseURL + url : url;
 
     // 生成请求特征字符串
     const signature = [
       method,
       fullUrl,
-      this.serializeValue(config.params),
-      this.serializeValue(config.data)
+      this.serializeValue(safeConfig.params),
+      this.serializeValue(safeConfig.data)
     ].filter(part => part !== '').join('|');
 
     return this.getOrCreateHash(signature);
@@ -134,3 +142,5 @@ class RequestHashGenerator {
     return this.hashCache.size;
   }
 }
+
+export { RequestHashGenerator }

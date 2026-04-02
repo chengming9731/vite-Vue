@@ -25,7 +25,7 @@
 
   <img @click="handleCalll" :src="userInfo?.avatar_url" class="avatar" alt="🍍用户头像">
 
-  <div @click="handleRecorder" class="property">录音</div>
+  <div @click="handleRecorder" class="shrink property">录音</div>
 
   <SiblingIndex></SiblingIndex>
 </template>
@@ -71,8 +71,8 @@ const handleRecorder = () => {
   initial-value: #ad92ff;
 }
 .property {
-  width: 100px;
-  height: 100px;
+  //width: 100px;
+  //height: 100px;
   background: linear-gradient(#fff, var(--gradient));
   transition: --gradient 2s;
   &:hover {
