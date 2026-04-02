@@ -57,7 +57,7 @@
 defineOptions({ name: 'AudioCall' })
 import { inject, ref, computed, onMounted, onUnmounted } from 'vue'
 import { getStore } from '@/stores'
-const userStore = getStore('useUserStore') // 创建购物车 store
+const { userInfo } = getStore('useUserStore') // 用户信息 store
 
 const targetUserId = ref('')
 const callerName = ref('未知用户')
@@ -282,7 +282,7 @@ const sendMessage = (message) => {
 }
 // 获取当前用户 ID
 const getCurrentUserId = () => {
-  const { node_id } = userStore.userInfo
+  const { node_id } = userInfo
   return node_id
 }
 // 发起通话

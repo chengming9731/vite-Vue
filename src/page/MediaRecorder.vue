@@ -40,8 +40,7 @@ defineOptions({ name: 'MediaRecorder' })
 import { ref, computed, inject, onUnmounted } from 'vue'
 const navigateTo = inject('navigateTo'); // 注入路由方法
 import { getStore } from '@/stores'
-const userStore = getStore('useUserStore') // 创建用户 store
-
+const { userInfo } = getStore('useUserStore') // 创建用户 store
 const mediaRecorder = ref(null) // 媒体记录器实例
 const audioChunks = ref([]) // 录音数据块
 const audioBlob = ref(null) // 录音文件 blob
@@ -132,7 +131,7 @@ const downloadBlob = () => {
   const url = URL.createObjectURL(audioBlob.value)
   const a = document.createElement('a')
   a.href = url
-  a.download = `${userStore.node_id}-${new Date().getTime()}.webm`
+  a.download = `${userInfo.id}-${new Date().getTime()}.webm`
   a.click()
 
   requestIdleCallback(() => {

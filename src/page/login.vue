@@ -60,21 +60,23 @@ const handleSubmit = async () => {
 
   loading.value = true
   try {
-    const data = await fetch(`/api/users/${formData.userName}`)
-    /* login(formData) */.then(response => {
-      console.log(response)
-      return response.json()
+    const controller = new AbortController()
+    const signal = controller.signal
+
+    const data = await fetch(`/api/users/${formData.userName}`, { signal })
+    /* login(formData) */.then(res => {
+      if (!res.ok) throw new Error(res.message || '登录失败')
+      return res.json()
     })
 
-    if (!data) {
-      throw new Error(data.message || '登录失败')
-    }
+    // 取消请求
+    // controller.abort()
 
     userStore.setUserInfo(data)
     sessionStorage.setItem('userInfo', JSON.stringify(data))
 
     if (data.node_id) {
-      localStorage.setItem('token', data.node_id)
+      sessionStorage.setItem('token', data.node_id)
     }
 
     redirectTo?.('/')

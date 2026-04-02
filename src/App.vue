@@ -48,7 +48,6 @@ const loading = ref(false)
 const isAsideCollapsed = ref(false)
 const asideWidth = computed(() => (isAsideCollapsed.value ? '56px' : '200px'))
 
-console.log(userStore)
 const handleTheme = () => {
   themeStore.toggleTheme(theme.value)
 }

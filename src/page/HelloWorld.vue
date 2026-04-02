@@ -5,7 +5,7 @@
     <button type="button" @click="count++">count is {{ count }}</button>
     <p>
       Edit
-      <code>components/HelloWorld.vue</code> to test HMR
+      <code>components/HelloWorld.vue</code> {{ num.count }} to test HMR
     </p>
   </div>
 
@@ -32,7 +32,7 @@
 
 <script setup>
 defineOptions({ name: 'HelloWorld' })
-import { inject, ref } from 'vue'
+import { inject, ref, readonly } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user'
 import SiblingIndex from '@/page/SiblingIndex.vue'
@@ -45,6 +45,7 @@ defineProps({
 const navigateTo = inject('navigateTo'); // 注入路由方法
 
 const count = ref(0)
+let num = readonly({ count })
 
 const { userInfo = {} } = storeToRefs(useUserStore())
 // 跳转通话

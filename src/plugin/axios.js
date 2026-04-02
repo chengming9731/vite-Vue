@@ -54,7 +54,7 @@ service.interceptors.request.use(
     console.log('🚀 发送请求:', config)
 
     // 添加认证 token（如果存在）
-    const token = localStorage.getItem('token')
+    const token = sessionStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -98,7 +98,7 @@ service.interceptors.response.use(
 
       // 如果是 token 过期，跳转到登录页
       if (res.code === 401) {
-        localStorage.removeItem('token')
+        sessionStorage.removeItem('token')
         // window.location.href = '/login'
       }
 
@@ -126,7 +126,7 @@ service.interceptors.response.use(
       switch (error.response.status) {
         case 401:
           console.error('🚨 未授权，请重新登录')
-          localStorage.removeItem('token')
+          sessionStorage.removeItem('token')
           // window.location.href = '/login'
           break
         case 403:
