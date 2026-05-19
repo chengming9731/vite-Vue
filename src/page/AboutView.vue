@@ -53,7 +53,7 @@ function clearCart() {
   })
 }
 onMounted(() => {
-  console.log(cartStore.secret, APP_MAC)
+  // console.log(cartStore.secret, APP_MAC)
 })
 </script>
 

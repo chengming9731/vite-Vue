@@ -143,4 +143,37 @@ class RequestHashGenerator {
   }
 }
 
-export { RequestHashGenerator }
+// 设置 cookie 值的存取和删除
+const CookieStorage = {
+  // 设置 Cookie
+  set(key, value, expireTime) {
+    const date = new Date();
+    date.setTime(date.getTime() + expireTime * 1000);
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${key}=${value}; ${expires}; path=/`;
+  },
+  // 获取 Cookie
+  get(key) {
+    const name = `${key}=`;
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i];
+      while (cookie.charAt(0) === ' ') {
+        cookie = cookie.substring(1);
+      }
+      if (cookie.indexOf(name) === 0) {
+        return cookie.substring(name.length, cookie.length);
+      }
+    }
+  },
+  // 删除 Cookie
+  remove(key) {
+    this.set(key, '', -1);
+
+  }
+}
+
+export {
+  RequestHashGenerator,
+  CookieStorage
+}

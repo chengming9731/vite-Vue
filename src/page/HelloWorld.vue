@@ -1,5 +1,5 @@
 <template>
-  <h3>{{ msg }}</h3>
+  <h3>{{ msg }} AbortController  signal</h3>
 
   <div class="card">
     <button type="button" @click="count++">count is {{ count }}</button>
@@ -21,31 +21,33 @@
       target="_blank"
     >Vue Docs Scaling up Guide</a>.
   </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
+  <p @click="handleBuyerInfo" class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 
-  <img @click="handleCalll" :src="userInfo?.avatar_url" class="avatar" alt="🍍用户头像">
+  <img @click="handleCalll" :src="userInfo?.avatar" class="avatar" alt="🍍用户头像">
 
   <div @click="handleRecorder" class="shrink property">录音</div>
-
-  <SiblingIndex></SiblingIndex>
+  <div
+    @click="handleShallow"
+    class="shallow"
+  >{{ shallow.age }} {{ shallow.member.sister }}</div>
+  <SiblingIndex v-model.capitalize="msg"></SiblingIndex>
 </template>
 
 <script setup>
 defineOptions({ name: 'HelloWorld' })
-import { inject, ref, readonly } from 'vue'
+import {
+  inject, ref, readonly,
+  shallowRef, triggerRef, shallowReadonly,
+  defineModel, onMounted
+} from 'vue'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user'
 import SiblingIndex from '@/page/SiblingIndex.vue'
-defineProps({
-  msg: {
-    type: String,
-    default: '我不听 我不听'
-  }
-})
+import { getUser } from '@/api/user.js'
 const navigateTo = inject('navigateTo'); // 注入路由方法
 
+let msg = ref('')
 const count = ref(0)
-let num = readonly({ count })
 
 const { userInfo = {} } = storeToRefs(useUserStore())
 // 跳转通话
@@ -57,6 +59,38 @@ const handleRecorder = () => {
   navigateTo('/mediaRecorder')
 }
 
+let num = readonly({ count })
+const handleBuyerInfo = () => {
+  navigateTo('/buyerInfo')
+  num.count++ // readonly 不会改变
+
+  shallowReadonly(num)
+}
+
+const shallow = shallowRef({
+  name: '张三',
+  age: 18,
+  member: {
+    sister: '小芳',
+    brother: '小王'
+  }
+})
+const handleShallow = () => {
+  shallow.value.age = 20
+  shallow.value.member =  { sister: '阿当' }
+  // 强制触发依赖于一个浅层 ref
+  triggerRef(shallow)
+  // 这里才会改变视图更新
+  // shallow.value = { age: 30, member: { sister: '阿当' } }
+  console.log(shallow);
+}
+
+onMounted(() => {
+  // fetch('/').then(res => { console.log(new Date(res.headers.get('Date'))) })
+  /*getUser().then(({ data }) => {
+    sessionStorage.setItem('userInfo', JSON.stringify(data))
+  })*/
+})
 </script>
 
 <style scoped>

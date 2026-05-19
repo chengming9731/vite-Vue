@@ -28,9 +28,10 @@ export default defineConfig(({ mode }) => {
       proxy: {
         // 配置请求代理
         '/api': {
-          target: env.VITE_API_BASE_URL || 'http://localhost:8080', // 后端服务实际地址
+          // target: env.VITE_API_BASE_URL || 'http://localhost:8080', // 后端服务实际地址
+          target: 'https://admin-system-production-b3c4.up.railway.app', // 后端服务实际地址
           changeOrigin: true, // 是否允许跨域
-          rewrite: (path) => path.replace(/^\/api/, '') // 重写路径，去掉/api前缀
+          // rewrite: (path) => path.replace(/^\/api/, '') // 重写路径，去掉/api前缀
         }
       }
     },

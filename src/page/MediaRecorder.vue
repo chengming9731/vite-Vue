@@ -131,7 +131,7 @@ const downloadBlob = () => {
   const url = URL.createObjectURL(audioBlob.value)
   const a = document.createElement('a')
   a.href = url
-  a.download = `${userInfo.id}-${new Date().getTime()}.webm`
+  a.download = `${userInfo.name}-${new Date().getTime()}.mp3`
   a.click()
 
   requestIdleCallback(() => {
@@ -150,6 +150,9 @@ onUnmounted(() => {
   if (audioUrl.value) {
     URL.revokeObjectURL(audioUrl.value)
   }
+  // 清空音频数据
+  audioBlob.value = null
+  audioChunks.value = []
 })
 </script>
 

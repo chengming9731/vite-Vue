@@ -1,26 +1,30 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { getStore } from '@/stores/'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'home', component: () => import('@/page/HelloWorld.vue') },
-    { path: '/about', name: 'about', component: () => import('@/page/AboutView.vue') },
-    { path: '/imgPica', name: 'imgPica', component: () => import('@/page/ImgPica.vue') },
-    { path: '/positionStiky', name: 'positionStiky', component: () => import('@/page/PositionStiky.vue') },
-    { path: '/audioCall', name: 'AudioCall', component: () => import('@/page/AudioCall.vue') },
-    { path: '/mediaRecorder', name: 'MediaRecorder', component: () => import('@/page/MediaRecorder.vue') },
-    { path: '/sudoku', name: 'Sudoku', component: () => import('@/page/Sudoku.vue') },
-    { path: '/login', name: 'login', component: () => import('@/page/login.vue') },
+    { path: '/', name: 'home', component: () => import('@/page/HelloWorld.vue'), meta: { title: '首页' } },
+    { path: '/about', name: 'about', component: () => import('@/page/AboutView.vue'), meta: { title: '添加列表' } },
+    { path: '/imgPica', name: 'imgPica', component: () => import('@/page/ImgPica.vue'), meta: { title: '图片压缩' } },
+    { path: '/positionStiky', name: 'positionStiky', component: () => import('@/page/PositionStiky.vue'), meta: { title: '商品列表' } },
+    { path: '/audioCall', name: 'AudioCall', component: () => import('@/page/AudioCall.vue'), meta: { title: '语言通话' } },
+    { path: '/mediaRecorder', name: 'MediaRecorder', component: () => import('@/page/MediaRecorder.vue'), meta: { title: '录音功能' } },
+    { path: '/sudoku', name: 'Sudoku', component: () => import('@/page/Sudoku.vue'), meta: { title: '数独游戏' } },
+    { path: '/buyerInfo', name: 'buyerInfo', component: () => import('@/page/BuyerInfo.vue'), meta: { title: '实时消息推送' } },
+    { path: '/ruleTrace', name: 'ruleTrace', component: () => import('@/page/RuleTraceView.vue'), meta: { title: '规则应用路径' } },
+    { path: '/login', name: 'login', component: () => import('@/page/login.vue'), meta: { title: '登录' } },
+    { path: '/dataScreen', name: 'dataScreen', component: () => import('@/page/DataScreen.vue'), meta: { title: '数字大屏' } },
   ],
 })
+
 // 拦截路由
 router.beforeEach((to, from, next) => {
-  // 获取用户信息
-  const userInfo = sessionStorage.getItem('userInfo')
+  const userStore = getStore('useUserStore')
+
   // 判断用户是否登录
-  if (userInfo) {
-    // 登录了
-    // 判断用户是否访问登录页面
+  if (userStore.token) {
+    // 已登录
     if (to.path === '/login') {
       // 访问登录页面，跳转到首页
       next('/')
@@ -38,6 +42,10 @@ router.beforeEach((to, from, next) => {
       next('/login')
     }
   }
+})
+// 导航守卫
+router.afterEach((to, from, failure) => {
+  document.title = `${to.meta.title}-Vite-vue`
 })
 
 export default router
