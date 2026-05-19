@@ -5,8 +5,15 @@ import path from 'path'
 
 // 'Darwin' en0 在 macOS 系统上,'Windows_NT' Ethernet 在 Windows系统
 import { networkInterfaces, type } from 'os';
-const interfaces = networkInterfaces(), key = { Darwin: 'en0', Windows_NT: 'Ethernet' }[type()]
-const { mac } = interfaces[key].find(item => item.family === 'IPv4')
+let mac = 'unknown'
+try {
+  const interfaces = networkInterfaces()
+  const key = { Darwin: 'en0', Windows_NT: 'Ethernet', Linux: 'eth0' }[type()]
+  const iface = interfaces[key]?.find(item => item.family === 'IPv4')
+  if (iface) mac = iface.mac
+} catch (_) {
+  // MAC address unavailable in this environment
+}
 
 // https://cn.vite.dev/config/
 // mode: 'development' | 'production' | 'test'
