@@ -6,7 +6,7 @@ import path from 'path'
 // 'Darwin' en0 在 macOS 系统上,'Windows_NT' Ethernet 在 Windows系统
 import { networkInterfaces, type } from 'os';
 const interfaces = networkInterfaces(), key = { Darwin: 'en0', Windows_NT: 'Ethernet' }[type()]
-const { mac } = interfaces[key].find(item => item.family === 'IPv4')
+const mac = interfaces[key]?.find(item => item.family === 'IPv4')?.mac || '00:00:00:00:00:00'
 
 // https://cn.vite.dev/config/
 // mode: 'development' | 'production' | 'test'
